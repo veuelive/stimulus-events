@@ -1,6 +1,8 @@
-import EventBus from "./EventBus";
+import eventBus from "./eventBus";
+import subscribe from "./subscribe";
 
-@EventBus()
+
+@subscribe("testMessage")
 class TestClass {
 
 }
