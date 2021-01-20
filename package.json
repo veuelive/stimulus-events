@@ -10,7 +10,7 @@
     "lib/**/*"
   ],
   "scripts": {
-    "test": "jest --config jestconfig.json",
+    "test": "jest",
     "build": "tsc"
   },
   "devDependencies": {
@@ -21,5 +21,15 @@
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.1.3"
+  },
+  "dependencies": {
+    "stimulus": "*"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(/src/.*|(\\.|/)(test|spec))\\.ts$",
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"]
   }
 }
