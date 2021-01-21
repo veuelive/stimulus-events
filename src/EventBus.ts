@@ -1,8 +1,16 @@
 import { Controller } from "stimulus";
-import { EventBusNotControllerError } from "./connectEventTarget";
+import { EventBusNotControllerError } from "./connectEventBus";
+
+type MethodSubscription = {
+  prototype: any;
+  method: string;
+  channel: string;
+};
 
 export default class EventBus {
   eventTarget: EventTarget;
+  methodSubscriptions: MethodSubscription[] = [];
+  subscribedInstances: Record<any, Record<string, EventListener[]>> = {};
 
   constructor(eventTarget: EventTarget) {
     this.eventTarget = eventTarget;
@@ -14,7 +22,7 @@ export default class EventBus {
     );
   }
 
-  wrapLifecycleMethods(controller: object) {
+  wrapLifecycleMethods(controller: object): EventBus {
     if (!(controller instanceof Controller)) {
       throw EventBusNotControllerError;
     }
@@ -32,11 +40,27 @@ export default class EventBus {
       this.disconnectCallback(controller);
       superDisconnect.call(controller, ...args);
     };
+
+    return this;
   }
 
   disconnectCallback(controller: Controller) {
     throw new Error("Method not implemented.");
   }
 
-  connectCallback(controller: Controller) {}
+  connectCallback(controller: Controller) {
+    for (const methodSubscription of this.methodSubscriptions) {
+      console.log(controller.isPrototypeOf(methodSubscription.prototype));
+    }
+  }
+
+  addSubscribingClass(prototype: any, channels: string[], methodName: string) {
+    channels.forEach((channel) => {
+      this.methodSubscriptions.push({
+        prototype,
+        channel,
+        method: methodName,
+      });
+    });
+  }
 }

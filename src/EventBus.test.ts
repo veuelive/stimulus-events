@@ -1,13 +1,11 @@
 import { Context, Controller } from "stimulus";
-import connectEventTarget, {
-  EventBusNotControllerError,
-} from "./connectEventTarget";
-import subscribe from "./subscribe";
-import {EventBus} from "./EventBus";
+import connectEventBus, { EventBusNotControllerError } from "./connectEventBus";
+import subscribeTo from "./subscribeTo";
+import { MainBus } from "./MainBus";
 
-const TestEvent = "TestEvent" as
+const TestEvent = "TestEvent";
 
-@connectEventTarget
+@connectEventBus()
 class TestController extends Controller {
   connectCounter = 0;
   disconnectCounter = 0;
@@ -18,14 +16,14 @@ class TestController extends Controller {
   }
 
   testEmit() {
-    EventBus.send(TestEvent, 3)
+    MainBus.send(TestEvent, 3);
   }
 
   disconnect() {
     this.disconnectCounter += 1;
   }
 
-  @subscribe("TestEvent")
+  @subscribeTo(TestEvent)
   callMe(payload: unknown, eventName: string) {
     this.testPayload = payload;
   }
@@ -34,7 +32,7 @@ class TestController extends Controller {
 describe("EventBus decorator", () => {
   it("should throw if its not a controller", () => {
     expect(() => {
-      @connectEventTarget
+      @connectEventBus()
       class TestClass {}
       new TestClass();
     }).toThrow();
