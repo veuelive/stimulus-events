@@ -1,6 +1,6 @@
 import { Context, Controller } from 'stimulus';
-import subscribeTo from './subscribeTo';
-import { MainBus } from './MainBus';
+import subscribeTo from '../src/subscribeTo';
+import { MainBus } from '../src/MainBus';
 
 const TestEvent = 'TestEvent';
 const SecondEvent = 'SecondEvent';
