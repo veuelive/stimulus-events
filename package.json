@@ -1,7 +1,7 @@
 {
-  "name": "stimulus-event-bus",
+  "name": "stimulus-events",
   "version": "1.0.0",
-  "description": "Simple Event Bus",
+  "description": "Stimulus Event System",
   "main": "index.js",
   "author": "Hampton Catlin <hcatlin@gmail.com>",
   "license": "MIT",

@@ -1,5 +1,3 @@
-import { Controller } from "stimulus";
-
 type MethodSubscription = {
   prototype: any;
   method: string;
@@ -14,16 +12,11 @@ export default class EventBus {
   }
 
   send(eventName: string, payload?: unknown) {
-    document.body.dispatchEvent(
-      new CustomEvent(eventName, { detail: payload })
-    );
+    document.body.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
   }
 
-  onConnect<T>(
-    channel: string,
-    method: (payload: T, channel: string) => void
-  ): EventListener {
-    let listener = (event: Event) => {
+  onConnect<T>(channel: string, method: (payload: T, channel: string) => void): EventListener {
+    const listener = (event: Event) => {
       if (event instanceof CustomEvent) {
         method(event.detail, channel);
       }
