@@ -13,7 +13,7 @@ of what's out there.
 export const UserCountChanged = "UserCountChanged"
 ````
 
-This isn't strictly necissary, but it helps keep your code more maintable and is highly recommended.
+This isn't strictly necessary, but it helps keep your code more maintainable and is highly recommended.
 
 ````ts
 import {UserCountChanged} from './Events';
@@ -21,7 +21,7 @@ import {UserCountChanged} from './Events';
 class MyController extends Controller {
     
     @subscribeTo(UserCountChanged)
-    updateUserCount(payload: Record) {
+    updateUserCount(payload: Payload) {
         let {count} = payload
         // And yer off!
         // We'll automatically subscribe on connect() and unsubscribe on disconnect()

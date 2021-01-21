@@ -1,5 +1,5 @@
 import { Context, Controller } from 'stimulus';
-import subscribeTo from '../src/subscribeTo';
+import subscribeTo, {Payload} from '../src/subscribeTo';
 import { MainBus } from '../src/MainBus';
 
 const TestEvent = 'TestEvent';
@@ -20,12 +20,12 @@ class TestController extends Controller {
   }
 
   @subscribeTo(TestEvent)
-  callMe(payload: unknown) {
+  callMe(payload: Payload) {
     this.testPayload = payload;
   }
 
   @subscribeTo(TestEvent, SecondEvent)
-  incrementCounterBy(payload: unknown) {
+  incrementCounterBy(payload: Payload) {
     this.eventCount++;
   }
 }
@@ -58,33 +58,35 @@ test('basic function', () => {
   expectControllerState(secondController, 0, 0, 0, undefined);
 
   // Trigger the event!
-  MainBus.send(TestEvent, '1982');
-  expectControllerState(firstController, 1, 0, 1, '1982');
+  const firstPayload = {year: '1982'};
+  MainBus.send(TestEvent, firstPayload);
+  expectControllerState(firstController, 1, 0, 1, firstPayload);
   expectControllerState(secondController, 0, 0, 0, undefined);
 
   // Add in the second controller
   secondController.connect();
-  expectControllerState(firstController, 1, 0, 1, '1982');
+  expectControllerState(firstController, 1, 0, 1, firstPayload);
   expectControllerState(secondController, 1, 0, 0, undefined);
 
   // Try it again!
-  const testObject = { name: 'Phyliss Diller' };
-  MainBus.send(TestEvent, testObject);
-  expectControllerState(firstController, 1, 0, 2, testObject);
-  expectControllerState(secondController, 1, 0, 1, testObject);
+  const secondPayload = { name: 'Phyliss Diller' };
+  MainBus.send(TestEvent, secondPayload);
+  expectControllerState(firstController, 1, 0, 2, secondPayload);
+  expectControllerState(secondController, 1, 0, 1, secondPayload);
 
   // Disconnect the first one
   firstController.disconnect();
-  expectControllerState(firstController, 1, 1, 2, testObject);
-  expectControllerState(secondController, 1, 0, 1, testObject);
+  expectControllerState(firstController, 1, 1, 2, secondPayload);
+  expectControllerState(secondController, 1, 0, 1, secondPayload);
 
   // This means only the second controller should trigger and change values
-  MainBus.send(TestEvent, 'MLC');
-  expectControllerState(firstController, 1, 1, 2, testObject);
-  expectControllerState(secondController, 1, 0, 2, 'MLC');
+  const michaelPayload = {name: 'MLC'};
+  MainBus.send(TestEvent, michaelPayload);
+  expectControllerState(firstController, 1, 1, 2, secondPayload);
+  expectControllerState(secondController, 1, 0, 2, michaelPayload);
 
   // And it's also listening to the second event
   MainBus.send(SecondEvent);
-  expectControllerState(firstController, 1, 1, 2, testObject);
-  expectControllerState(secondController, 1, 0, 3, 'MLC');
+  expectControllerState(firstController, 1, 1, 2, secondPayload);
+  expectControllerState(secondController, 1, 0, 3, michaelPayload);
 });
