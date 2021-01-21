@@ -1,5 +1,4 @@
 import { Controller } from "stimulus";
-import { EventBusNotControllerError } from "./connectEventBus";
 
 type MethodSubscription = {
   prototype: any;
@@ -9,27 +8,31 @@ type MethodSubscription = {
 
 export default class EventBus {
   eventTarget: EventTarget;
-  methodSubscriptions: MethodSubscription[] = [];
-  subscribedInstances: Record<any, Record<string, EventListener[]>> = {};
 
   constructor(eventTarget: EventTarget) {
     this.eventTarget = eventTarget;
   }
 
-  send(eventName: string, payload: unknown) {
+  send(eventName: string, payload?: unknown) {
     document.body.dispatchEvent(
       new CustomEvent(eventName, { detail: payload })
     );
   }
 
-  addEventListener(
+  onConnect<T>(
     channel: string,
-    method: (payload: unknown, channel: string) => void
-  ) {
-    this.eventTarget.addEventListener(channel, (event: Event) => {
+    method: (payload: T, channel: string) => void
+  ): EventListener {
+    let listener = (event: Event) => {
       if (event instanceof CustomEvent) {
         method(event.detail, channel);
       }
-    });
+    };
+    this.eventTarget.addEventListener(channel, listener);
+    return listener;
+  }
+
+  onDisconnect(channel: string, listener: EventListener) {
+    this.eventTarget.removeEventListener(channel, listener);
   }
 }

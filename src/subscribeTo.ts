@@ -1,12 +1,12 @@
 import { Controller } from "stimulus";
 import { MainBus } from "./MainBus";
 
-export default function subscribeTo(...channels: string[]) {
+export default function subscribeTo<T>(...channels: string[]) {
   return (
     target: object,
     propertyName: string,
     descriptor: TypedPropertyDescriptor<
-      (payload: unknown | null, eventName: string) => void
+      (payload?: T, eventName?: string) => void
     >
   ) => {
     if (target instanceof Controller) {
@@ -14,9 +14,19 @@ export default function subscribeTo(...channels: string[]) {
       let originalConnect = target.connect;
 
       target.connect = function () {
-        channels.forEach((channel) => {
-          MainBus.addEventListener(channel, method.bind(this));
+        let channelListeners = channels.map((channel) => {
+          return {
+            channel,
+            listener: MainBus.onConnect(channel, method.bind(this)),
+          };
         });
+        let originalDisconnect = this.disconnect;
+        this.disconnect = function () {
+          channelListeners.forEach(({ channel, listener }) => {
+            MainBus.onDisconnect(channel, listener);
+          });
+          originalDisconnect.apply(this);
+        };
         originalConnect.apply(this);
       };
     }
