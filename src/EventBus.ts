@@ -1,3 +1,5 @@
+import { SubscriberMethod, Payload } from './subscribeTo';
+
 type MethodSubscription = {
   prototype: any;
   method: string;
@@ -11,14 +13,14 @@ export default class EventBus {
     this.eventTarget = eventTarget;
   }
 
-  send(eventName: string, payload?: unknown) {
+  send(eventName: string, payload: Payload = {}) {
     document.body.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
   }
 
-  onConnect<T>(channel: string, method: (payload: T, channel: string) => void): EventListener {
+  onConnect(channel: string, method: SubscriberMethod): EventListener {
     const listener = (event: Event) => {
       if (event instanceof CustomEvent) {
-        method(event.detail, channel);
+        method(event.detail);
       }
     };
     this.eventTarget.addEventListener(channel, listener);

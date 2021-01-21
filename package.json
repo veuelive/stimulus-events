@@ -1,6 +1,6 @@
 {
   "name": "stimulus-events",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Stimulus Event System",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -15,10 +15,10 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
-    "prepare" : "yarn build",
-    "prepublishOnly" : "yarn test && yarn lint",
-    "version" : "yarn format && git add -A src",
-    "postversion" : "git push && git push --tags"
+    "prepare": "yarn build",
+    "prepublishOnly": "yarn test && yarn lint",
+    "version": "yarn format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
@@ -37,6 +37,13 @@
       "^.+\\.ts$": "ts-jest"
     },
     "testRegex": "(/test/.*|(\\.|/)(test|spec))\\.ts$",
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"]
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

@@ -1,13 +1,13 @@
 import { Controller } from 'stimulus';
 import { MainBus } from './MainBus';
 
-export default function subscribeTo<T>(...channels: string[]) {
-  return (
-    target: object,
-    propertyName: string,
-    descriptor: TypedPropertyDescriptor<(payload?: T, eventName?: string) => void>,
-  ) => {
-    if (target instanceof Controller) {
+export type Payload = Record<string, unknown>;
+
+export type SubscriberMethod = (payload: Payload) => void;
+
+export default function subscribeTo(...channels: string[]) {
+  return (target: object, propertyName: string, descriptor: TypedPropertyDescriptor<SubscriberMethod>) => {
+    if (target instanceof Controller && descriptor.value instanceof Function) {
       const method = descriptor.value!;
       const originalConnect = target.connect;
 
