@@ -2,7 +2,8 @@
   "name": "stimulus-events",
   "version": "1.0.0",
   "description": "Stimulus Event System",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "author": "Hampton Catlin <hcatlin@gmail.com>",
   "license": "MIT",
   "private": false,
@@ -11,7 +12,13 @@
   ],
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare" : "yarn build",
+    "prepublishOnly" : "yarn test && yarn lint",
+    "version" : "yarn format && git add -A src",
+    "postversion" : "git push && git push --tags"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
@@ -29,7 +36,7 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "testRegex": "(/src/.*|(\\.|/)(test|spec))\\.ts$",
+    "testRegex": "(/test/.*|(\\.|/)(test|spec))\\.ts$",
     "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"]
   }
 }
