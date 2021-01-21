@@ -22,45 +22,14 @@ export default class EventBus {
     );
   }
 
-  wrapLifecycleMethods(controller: object): EventBus {
-    if (!(controller instanceof Controller)) {
-      throw EventBusNotControllerError;
-    }
-
-    // Wrap connect() method
-    let superConnect = controller.connect;
-    controller.connect = (...args) => {
-      this.connectCallback(controller);
-      superConnect.call(controller, ...args);
-    };
-
-    // Wrap disconnect() method
-    let superDisconnect = controller.disconnect;
-    controller.disconnect = (...args) => {
-      this.disconnectCallback(controller);
-      superDisconnect.call(controller, ...args);
-    };
-
-    return this;
-  }
-
-  disconnectCallback(controller: Controller) {
-    throw new Error("Method not implemented.");
-  }
-
-  connectCallback(controller: Controller) {
-    for (const methodSubscription of this.methodSubscriptions) {
-      console.log(controller.isPrototypeOf(methodSubscription.prototype));
-    }
-  }
-
-  addSubscribingClass(prototype: any, channels: string[], methodName: string) {
-    channels.forEach((channel) => {
-      this.methodSubscriptions.push({
-        prototype,
-        channel,
-        method: methodName,
-      });
+  addEventListener(
+    channel: string,
+    method: (payload: unknown, channel: string) => void
+  ) {
+    this.eventTarget.addEventListener(channel, (event: Event) => {
+      if (event instanceof CustomEvent) {
+        method(event.detail, channel);
+      }
     });
   }
 }

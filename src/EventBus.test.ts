@@ -5,7 +5,6 @@ import { MainBus } from "./MainBus";
 
 const TestEvent = "TestEvent";
 
-@connectEventBus()
 class TestController extends Controller {
   connectCounter = 0;
   disconnectCounter = 0;
@@ -44,5 +43,7 @@ describe("EventBus decorator", () => {
     expect(testController.connectCounter).toEqual(1);
     testController.disconnect();
     expect(testController.disconnectCounter).toEqual(1);
+    MainBus.send(TestEvent, 3);
+    expect(testController.testPayload).toEqual(3);
   });
 });
